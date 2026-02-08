@@ -2,9 +2,9 @@ library(tidyverse)
 library(ggplot2)
 library(patchwork)
 
-a <- "LE_Master_Sheet.csv"
-b <- read.table(a, header = TRUE, sep = ",", stringsAsFactors = FALSE)
-b <- mutate (b, "coupling_efficiency" = (1-(mpg/adp)), "c1_flux_control" = (1-(rot/succ)), "aox_flux_control" = (1-(fccp/rot)), "excess_c4_capacity" = ((astm/fccp)-1))
+#Update data after putting new experiment into master sheet
+LE_Master_Sheet <- mutate (LE_Master_Sheet, "coupling_efficiency" = (1-(mpg/adp)), "c1_flux_control" = (1-(rot/succ)), "aox_flux_control" = (1-(fccp/rot)), "excess_c4_capacity" = ((astm/fccp)-1))
+b <- LE_Master_Sheet
 
 #Coupling Efficiency
 ce <-ggplot(data = b, aes(x = condition, color = condition, y = coupling_efficiency)) 
