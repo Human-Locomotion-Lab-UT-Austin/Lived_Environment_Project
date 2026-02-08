@@ -1,0 +1,30 @@
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+
+a <- "LE_Master_Sheet.csv"
+b <- read.table(a, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+b <- mutate (b, "coupling_efficiency" = (1-(mpg/adp)), "c1_flux_control" = (1-(rot/succ)), "aox_flux_control" = (1-(fccp/rot)), "excess_c4_capacity" = ((astm/fccp)-1))
+
+#Coupling Efficiency
+ce <-ggplot(data = b, aes(x = condition, color = condition, y = coupling_efficiency)) 
+
+ce <- ce + geom_point(na.rm = TRUE) + labs(x = "Environmental Temperature", y = "Coupling Efficiency") + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red")) + theme(legend.position = "none") + scale_y_continuous(labels = scales::percent, limits =c(0, 1))
+
+#C1 Flux Control
+c1 <-ggplot(data = b, aes(x = condition, color = condition, y = c1_flux_control)) 
+
+c1 <- c1 + geom_point(na.rm = TRUE) + labs(x = "Environmental Temperature", y = "Complex 1 Flux Control") + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red")) + theme(legend.position = "none") + scale_y_continuous(limits =c(-2, 2))
+  
+#AOX Flux Control
+aox <-ggplot(data = b, aes(x = condition, color = condition, y = aox_flux_control)) 
+
+aox <- aox + geom_point(na.rm = TRUE) + labs(x = "Environmental Temperature", y = "AOX Flux Control") + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red")) + theme(legend.position = "none") + scale_y_continuous(limits =c(-0.6, 0.6))
+  
+#Excess C4 Capacity
+c4 <-ggplot(data = b, aes(x = condition, color = condition, y = excess_c4_capacity)) 
+
+c4 <- c4 + geom_point(na.rm = TRUE) + labs(x = "Environmental Temperature", y = "Excess Complex 4 Capacity") + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red")) + theme(legend.position = "none") + scale_y_continuous(limits =c(0, 30))
+  
+  
+ce + c4 + c1 + aox
