@@ -1,0 +1,20 @@
+ibrary(tidyverse)
+library(ggplot2)
+library(patchwork)
+
+#Update data after putting new experiment into master sheet
+
+df <- read.csv("LE_Master_Sheet.csv")
+b <- mutate (df, "tail_length_percentage_change" = ((tail_length_f-tail_length_i)/tail_length_i), "lmp_t1" = (lm_t1/m_t1), "lmp_t2" = (lm_t2/m_t2), "lmp_t3" = (lm_t3/m_t3))
+write_csv(b, "LE_Master_Sheet.csv")
+
+#Plot Changes in Tail Length
+
+dtl <- ggplot(data = b, aes(x=condition, y=tail_length_percentage_change, fill = condition))
+dtl <- dtl + geom_boxplot(na.rm = TRUE) + labs(x = "Environmental Condition", y = "Change in Tail Length (%)") + scale_fill_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(labels = scales::percent, limits =c(0.5, 1.25))
+
+#Plot Changes in Body Fat Percentage
+
+
+
+#Plot Changes in Lean Mass Percentage
