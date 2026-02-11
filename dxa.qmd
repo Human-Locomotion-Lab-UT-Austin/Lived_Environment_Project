@@ -4,7 +4,7 @@ library(patchwork)
 library(forcats)
 
 dxa <- read_csv("dxa.csv")
-dxa <- mutate(dxa, "lean_percentage" = (lean_mass/mass))
+dxa <- mutate(dxa, "lean_percentage" = (lean_mass/mass), "mass_change_percentage" = ((mass2-mass1)/mass1))
 write_csv(dxa, "dxa.csv")
 
 
@@ -23,7 +23,12 @@ s <- ggplot(dxa, aes(x = reorder(date, desc(date)), y = lean_percentage, group =
 
 s <- s + geom_point(na.rm = TRUE) + geom_line() + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red"))
 
+#change in mass
 
-q + r + s
+t <- ggplot(dxa, aes(x = condition, y= mass_change_percentage, color = condition))
+
+t <- t + geom_boxplot(na.rm = TRUE) + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red"))
+
+q + r + s + t
 
 
