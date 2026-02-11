@@ -1,20 +1,43 @@
 library(tidyverse)
 library(ggplot2)
 library(patchwork)
+library(forcats)
 
 #Update data after putting new experiment into master sheet
+dxa <- read_csv("dxa.csv")
+dxa <- mutate(dxa, "lean_percentage" = (lean_mass/mass), "mass_change_percentage" = ((mass2-mass1)/mass1))
+write_csv(dxa, "dxa.csv")
 
-df <- read.csv("LE_Master_Sheet.csv")
-b <- mutate (df, "tail_length_percentage_change" = ((tail_length_f-tail_length_i)/tail_length_i), "lmp_t1" = (lm_t1/m_t1), "lmp_t2" = (lm_t2/m_t2), "lmp_t3" = (lm_t3/m_t3))
-write_csv(b, "LE_Master_Sheet.csv")
+tl <- read.csv("LE_Master_Sheet.csv")
+c <- mutate (tl, "tail_length_percentage_change" = ((tail_length_f-tail_length_i)/tail_length_i))
+write_csv(tl, "LE_Master_Sheet.csv")
 
-#Plot Changes in Tail Length
 
-dtl <- ggplot(data = b, aes(x=condition, y=tail_length_percentage_change, fill = condition))
+#body fat %
+q <- ggplot(dxa, aes(x = reorder(date, desc(date)), y = fat_percentage, group = rat_id, color = factor(condition)))
+
+q <- q + geom_point(na.rm = TRUE) + geom_line() + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red"))
+
+#mass
+r <- ggplot(dxa, aes(x = reorder(date, desc(date)), y = mass, group = rat_id, color = factor(condition)))
+
+r <- r + geom_point(na.rm = TRUE) + geom_line() + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red"))
+
+#lean mass %
+s <- ggplot(dxa, aes(x = reorder(date, desc(date)), y = lean_percentage, group = rat_id, color = factor(condition)))
+
+s <- s + geom_point(na.rm = TRUE) + geom_line() + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red"))
+
+#change in mass
+
+t <- ggplot(dxa, aes(x = condition, y= mass_change_percentage, fill = condition))
+
+t <- t + geom_boxplot(na.rm = TRUE) + scale_fill_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none")
+
+#Changes in Tail Length
+
+dtl <- ggplot(data = c, aes(x=condition, y=tail_length_percentage_change, fill = condition))
 dtl <- dtl + geom_boxplot(na.rm = TRUE) + labs(x = "Environmental Condition", y = "Change in Tail Length (%)") + scale_fill_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(labels = scales::percent, limits =c(0.5, 1.25))
 
-#Plot Changes in Body Fat Percentage
 
-
-
-#Plot Changes in Lean Mass Percentage
+r + t + dtl + q + s
