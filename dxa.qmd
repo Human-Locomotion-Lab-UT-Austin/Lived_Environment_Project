@@ -1,0 +1,29 @@
+library(tidyverse)
+library(ggplot2)
+library(patchwork)
+library(forcats)
+
+dxa <- read_csv("dxa.csv")
+dxa <- mutate(dxa, "lean_percentage" = (lean_mass/mass))
+write_csv(dxa, "dxa.csv")
+
+
+#body fat %
+q <- ggplot(dxa, aes(x = reorder(date, desc(date)), y = fat_percentage, group = rat_id, color = factor(condition)))
+
+q <- q + geom_point(na.rm = TRUE) + geom_line() + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red"))
+
+#mass
+r <- ggplot(dxa, aes(x = reorder(date, desc(date)), y = mass, group = rat_id, color = factor(condition)))
+
+r <- r + geom_point(na.rm = TRUE) + geom_line() + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red"))
+
+#lean mass %
+s <- ggplot(dxa, aes(x = reorder(date, desc(date)), y = lean_percentage, group = rat_id, color = factor(condition)))
+
+s <- s + geom_point(na.rm = TRUE) + geom_line() + scale_color_manual(breaks = c("C", "H"), values = c("blue", "red"))
+
+
+q + r + s
+
+
