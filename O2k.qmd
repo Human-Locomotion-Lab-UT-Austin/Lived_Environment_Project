@@ -4,45 +4,45 @@ library(patchwork)
 
 #Update data after putting new experiment into master sheet
 df <- read.csv("LE_Master_Sheet.csv")
-b <- mutate (df, "coupling_efficiency" = (1-(mpg/adp)), "c1_flux_control" = (1-(rot/succ)), "leak_control_ratio" = (mpg/fccp), "substrate_control_ratio" = (succ/adp), "substrate_control_of_o2_transfer" = (succ/fccp), "reverse_electron_flow" = ((succ- (adp + rot))/ succ), "uncoupling_control_ratio" = (fccp/rot))
+b <- mutate (df, "c1_coupling_efficiency" = (1-(mpg/adp)), "c2_coupling_efficiency" = (1-(mpg/rot)), "c1_flux_control" = (1-(rot/succ)),  "reverse_electron_flow" = ((succ-adp)/succ), "uncoupling_control_ratio" = (fccp/rot), "coupling_efficiency" = 1-(mpg/succ), "convergent_pathway_integration" = (succ/(adp + rot)))
 write_csv(b, "LE_Master_Sheet.csv")
-
 
 #Coupling Efficiency
 ce <-ggplot(data = b, aes(x = condition, color = condition, y = coupling_efficiency)) 
 
 ce <- ce + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Coupling Efficiency") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(labels = scales::percent, limits =c(0, 1))
 
-#C1 Flux Control
-c1 <-ggplot(data = b, aes(x = condition, color = condition, y = c1_flux_control)) 
+#c1 Coupling Efficiency
+c1e <-ggplot(data = b, aes(x = condition, color = condition, y = c1_coupling_efficiency)) 
 
-c1 <- c1 + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Complex 1 Flux Control") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(-2, 2))
+c1e <- c1e + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "C1 Coupling Efficiency") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(labels = scales::percent, limits =c(0, 1))
+
+#c2 coupling efficiency
+c2e <-ggplot(data = b, aes(x = condition, color = condition, y = c2_coupling_efficiency)) 
+
+c2e <- c2e + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "C2 Coupling Efficiency") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(labels = scales::percent, limits =c(0, 1))
+
+#c1 vs c2 Flux Control
+c1c2 <-ggplot(data = b, aes(x = condition, color = condition, y = c1_flux_control)) 
+
+c1c2 <- c1c2 + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "C1 vs C2 Flux Control") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(-2, 2))
   
-#Leak Control Ratio
-lcr <-ggplot(data = b, aes(x = condition, color = condition, y = leak_control_ratio)) 
+#Convergent Pathway Integration
+cpi <-ggplot(data = b, aes(x = condition, color = condition, y = convergent_pathway_integration)) 
 
-lcr <- lcr + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Leak Control Ratio") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(-1, 2))
-  
-#Substrate Control Ratio
-scr <-ggplot(data = b, aes(x = condition, color = condition, y = substrate_control_ratio)) 
-
-scr <- scr + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Substrate Control Ratio") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(0, 2))
-  
-#Substrate Control of Oxygen Transfer
-scot <-ggplot(data = b, aes(x = condition, color = condition, y = substrate_control_of_o2_transfer)) 
-
-scot <- scot + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Substrate Control of Oxygen Transfer") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(0, 2))
+cpi <- cpi + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Convergent Pathway Integration") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(0, 1))
 
 #Reverse Electron Flow
 ref <-ggplot(data = b, aes(x = condition, color = condition, y = reverse_electron_flow)) 
 
-ref <- ref + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Reverse Electron Flow Potential") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(-5, 5))
+ref <- ref + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Reverse Electron Flow Potential") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(-1.5, 1.5))
 
 #Uncoupling Control Ratio
 ucr <-ggplot(data = b, aes(x = condition, color = condition, y = uncoupling_control_ratio)) 
 
-ucr <- ucr + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Uncoupling Control Ratio") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(0, 5))
-
-ce + c1 + scot + ref + lcr + ucr + scr
+ucr <- ucr + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Uncoupling Control Ratio") + scale_color_manual(breaks = c("C", "H", "RT"), values = c("blue", "red", "black")) + theme(legend.position = "none") + scale_y_continuous(limits =c(0, 1.5))
 
 
+ce + c1e + c2e
+
+c1c2 + cpi + ucr + ref 
