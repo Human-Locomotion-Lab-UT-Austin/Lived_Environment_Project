@@ -45,4 +45,4 @@ ucr <- ucr + geom_point(na.rm = TRUE) + labs(x = "Condition", y = "Uncoupling Co
 
 ce + c1e + c2e
 
-c1c2 + cpi + ucr + ref 
+cpi + ucr + ref 
